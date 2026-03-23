@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>200 Followers 🎂</title>
+    <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Fredoka+One&display=swap" rel="stylesheet" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+          margin: 0;
+          min-height: 100vh;
+          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          font-family: 'Fredoka One', cursive;
+          color: white;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .star {
+          position: fixed;
+          pointer-events: none;
+          font-size: 1.4rem;
+          animation: floatStar linear infinite;
+          opacity: 0.7;
+          z-index: 0;
+        }
+        @keyframes floatStar {
+          0%   { transform: translateY(110vh) rotate(0deg);   opacity: 0.8; }
+          100% { transform: translateY(-10vh)  rotate(360deg); opacity: 0;   }
+        }
+
+        .title {
+          font-family: 'Boogaloo', cursive;
+          font-size: clamp(2rem, 6vw, 4rem);
+          color: #ffe66d;
+          text-shadow: 3px 3px 0 #e63946, 6px 6px 0 #c1121f;
+          letter-spacing: 2px;
+          margin-bottom: 10px;
+          animation: boing 0.6s ease-out;
+          z-index: 1;
+        }
+        @keyframes boing {
+          0%   { transform: scale(0.3) rotate(-8deg); opacity: 0; }
+          60%  { transform: scale(1.15) rotate(3deg); }
+          80%  { transform: scale(0.95) rotate(-1deg); }
+          100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .scene {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          gap: 28px;
+          align-items: flex-start;
+          justify-content: center;
+        }
+
+        .cake-wrap {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .cake-label {
+          font-family: 'Fredoka One', cursive;
+          font-size: clamp(0.85rem, 2vw, 1.1rem);
+          color: #ffe66d;
+          opacity: 0.85;
+          letter-spacing: 1px;
+        }
+
+        .cake {
+          position: relative;
+          width: min(240px, 42vw);
+          /* no filter here — it creates a stacking context that clips overflowing children */
+        }
+        .cake img.cake-img {
+          width: 100%;
+          display: block;
+          border-radius: 12px;
+          filter: drop-shadow(0 0 20px #ff6b6b66);
+        }
+
+        .candle {
+          position: absolute;
+          width: 5px;
+          transform: translateX(-50%);
+          pointer-events: auto;
+          cursor: crosshair;
+        }
+        .candle img {
+          position: absolute;
+          width: 100%;
+          pointer-events: none;
+        }
+        /* clips just the bottom of the candle body image */
+        .candle-clip {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          border-bottom-left-radius: 40%;
+          border-bottom-right-radius: 40%;
+        }
+        /* hue classes applied per-candle by JS */
+        .candle-body { transition: filter 0.2s; }
+        .flame {
+          top: -10px;
+          left: 3px;
+          width: 8px;
+          animation: flicker 0.18s infinite alternate;
+          filter: drop-shadow(0 0 4px #ffb703);
+        }
+        .smoke {
+          top: -18px;
+          left: 3px;
+          width: 10px;
+          opacity: 0.7;
+          animation: rise 1s forwards;
+        }
+        @keyframes flicker {
+          from { transform: scale(1);   opacity: 1;    }
+          to   { transform: scale(1.2); opacity: 0.65; }
+        }
+        @keyframes rise {
+          from { transform: translateY(0);     opacity: 0.7; }
+          to   { transform: translateY(-22px); opacity: 0;   }
+        }
+
+        .counter-wrap {
+          z-index: 1;
+          margin-top: 22px;
+          perspective: 600px;
+        }
+        .counter {
+          display: inline-block;
+          font-family: 'Fredoka One', cursive;
+          font-size: clamp(1.1rem, 3vw, 1.6rem);
+          background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+          color: #fff;
+          padding: 12px 32px;
+          border-radius: 50px;
+          border: 4px solid #fff;
+          box-shadow: 0 6px 0 #c1121f, 0 8px 20px #ff6b6b88;
+          letter-spacing: 1px;
+        }
+        .counter.bump { animation: bump 0.25s ease; }
+        @keyframes bump {
+          0%   { transform: scale(1); }
+          50%  { transform: scale(1.15) rotate(-2deg); }
+          100% { transform: scale(1); }
+        }
+
+        .celebration {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background: linear-gradient(135deg, #ff6b6b, #ffd166, #06d6a0, #118ab2, #9b5de5);
+          background-size: 400% 400%;
+          animation: gradShift 3s ease infinite;
+          z-index: 99;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.8s;
+        }
+        .celebration.show { opacity: 1; pointer-events: all; }
+        @keyframes gradShift {
+          0%   { background-position: 0% 50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .celebration-text {
+          font-family: 'Boogaloo', cursive;
+          font-size: clamp(3rem, 12vw, 8rem);
+          color: #fff;
+          text-shadow: 4px 4px 0 #1a1a2e;
+          animation: spin-in 0.7s cubic-bezier(.36,.07,.19,.97) both;
+          text-align: center;
+          line-height: 1.1;
+        }
+        .celebration-sub {
+          font-family: 'Fredoka One', cursive;
+          font-size: clamp(1.2rem, 4vw, 2.2rem);
+          margin-top: 16px;
+          color: #1a1a2e;
+          background: #ffe66d;
+          border: 4px solid #1a1a2e;
+          border-radius: 40px;
+          padding: 10px 36px;
+          box-shadow: 4px 4px 0 #1a1a2e;
+          animation: boing 0.8s 0.4s ease-out both;
+        }
+        @keyframes spin-in {
+          0%   { transform: rotate(-15deg) scale(0); opacity: 0; }
+          100% { transform: rotate(0deg)   scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="title">🎂 Blow Out the Candles! 🎂</div>
+
+<div class="scene">
+    <div class="cake-wrap">
+        <div class="cake-label">Cake 1 — 100 candles</div>
+        <div class="cake" id="cake1">
+            <img class="cake-img" src="cake.png" alt="cake" />
+        </div>
+    </div>
+    <div class="cake-wrap">
+        <div class="cake-label">Cake 2 — 100 candles</div>
+        <div class="cake" id="cake2">
+            <img class="cake-img" src="cake.png" alt="cake" />
+        </div>
+    </div>
+</div>
+
+<div class="counter-wrap">
+    <div class="counter" id="counter">0 / 200 candles blown out 💨</div>
+</div>
+
+<div class="celebration" id="celebration">
+    <div class="celebration-text">🎉 200! 🎉</div>
+    <div class="celebration-sub">Thank you for 200 followers! ❤️</div>
+</div>
+
+<script>
+    const emojis = ['⭐','🌟','✨','💫','🎉','🎊','🍭','🌈'];
+    for (let i = 0; i < 28; i++) {
+      const el = document.createElement('div');
+      el.className = 'star';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.fontSize = (0.9 + Math.random() * 1.6) + 'rem';
+      const dur = 6 + Math.random() * 12;
+      el.style.animationDuration = dur + 's';
+      // negative delay = star starts already mid-flight, no initial jump
+      el.style.animationDelay = -(Math.random() * dur) + 's';
+      document.body.prepend(el);
+    }
+
+    // ─────────────────────────────────────────────
+    // TUNE THESE to match your cake.png (% of image)
+    // ─────────────────────────────────────────────
+    const TOP    = 0;
+    const BOTTOM = 15;
+    const LEFT   = 15;
+    const RIGHT  = 87;
+    // ─────────────────────────────────────────────
+
+    const counter     = document.getElementById("counter");
+    const celebration = document.getElementById("celebration");
+    const total       = 200;
+    let blown         = 0;
+
+    function buildPositions(count) {
+      const cols = 13, rows = 8;
+      const positions = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const rowFrac = r / (rows - 1);
+          const colFrac = c / (cols - 1);
+          const x = LEFT  + colFrac * (RIGHT - LEFT);
+          const y = TOP   + rowFrac * (BOTTOM - TOP);
+          const jx = (Math.random() - 0.5) * ((RIGHT - LEFT) / cols) * 0.7;
+          const jy = (Math.random() - 0.5) * ((BOTTOM - TOP) / rows) * 0.7;
+          positions.push({ x: x + jx, y: y + jy });
+        }
+      }
+      positions.sort(() => Math.random() - 0.5);
+      const chosen = positions.slice(0, count);
+      chosen.sort((a, b) => a.y - b.y);
+      return chosen;
+    }
+
+    // Spread candle hues evenly across the rainbow so neighbours differ
+    const PALETTE_SIZE = 12;
+    const hueStep = 360 / PALETTE_SIZE;
+
+    function spawnCandles(cakeEl, count) {
+      const positions = buildPositions(count);
+      for (let i = 0; i < count; i++) {
+        const pos = positions[i];
+
+        const hue = (Math.round(Math.random() * PALETTE_SIZE) * hueStep + Math.random() * 20) % 360;
+
+        const candle = document.createElement("div");
+        candle.className = "candle";
+        candle.style.left   = pos.x + "%";
+        candle.style.top    = pos.y + "%";
+        candle.style.height = (28 + Math.random() * 10) + "px";
+        candle.style.filter = `drop-shadow(0 0 2px hsl(${hue},80%,55%))`;
+
+        const candleImg = document.createElement("img");
+        candleImg.src = "candle.png";
+        candleImg.className = "candle-body";
+        candleImg.style.bottom  = "0";
+        candleImg.style.top     = "auto";
+        candleImg.style.height  = "100%";
+        candleImg.style.width   = "100%";
+        candleImg.style.filter  = `hue-rotate(${hue}deg) saturate(1.2)`;
+
+        const clipDiv = document.createElement("div");
+        clipDiv.className = "candle-clip";
+        clipDiv.appendChild(candleImg);
+        candle.appendChild(clipDiv);
+        cakeEl.appendChild(candle);
+
+        function addFlame() {
+          const f = document.createElement("img");
+          f.src = "flame.png";
+          f.className = "flame";
+          f.style.filter = `drop-shadow(0 0 3px #ffb703)`;
+          candle.appendChild(f);
+          return f;
+        }
+
+        addFlame();
+        candle._isLit = true;
+
+        // expose a blow() method so the cake's mousemove handler can call it
+        candle._blow = () => {
+          if (!candle._isLit) return;
+          candle._isLit = false;
+
+          const existingFlame = candle.querySelector(".flame");
+          if (existingFlame) existingFlame.remove();
+
+          const smoke = document.createElement("img");
+          smoke.src = "smoke.png";
+          smoke.className = "smoke";
+          candle.appendChild(smoke);
+          smoke.addEventListener("animationend", () => smoke.remove());
+
+          blown++;
+          counter.textContent = `${blown} / ${total} candles blown out 💨`;
+          counter.classList.remove('bump');
+          void counter.offsetWidth;
+          counter.classList.add('bump');
+
+          if (blown === total) {
+            setTimeout(() => celebration.classList.add('show'), 600);
+          }
+        };
+      }
+
+      // blow all candles within RADIUS px of the cursor on mousemove
+      const RADIUS = 30;
+      cakeEl.addEventListener("mousemove", (e) => {
+        const rect = cakeEl.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        cakeEl.querySelectorAll(".candle").forEach(c => {
+          if (!c._isLit) return;
+          const cx = c.offsetLeft;
+          const cy = c.offsetTop;
+          const dx = mx - cx;
+          const dy = my - cy;
+          if (Math.sqrt(dx * dx + dy * dy) < RADIUS) {
+            c._blow();
+          }
+        });
+      });
+    }
+
+    spawnCandles(document.getElementById("cake1"), 100);
+    spawnCandles(document.getElementById("cake2"), 100);
+</script>
+
+</body>
+</html>
